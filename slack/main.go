@@ -89,11 +89,13 @@ func (s *slackNotifier) writeMessage(build *cbpb.Build) (*slack.WebhookMessage, 
 	var clr string
 	switch build.Status {
 	case cbpb.Build_SUCCESS:
-		clr = "good"
+		clr = "good" // green
 	case cbpb.Build_FAILURE, cbpb.Build_INTERNAL_ERROR, cbpb.Build_TIMEOUT:
-		clr = "danger"
+		clr = "danger" // red
+	case cbpb.Build_PENDING:
+		clr = "" // grey
 	default:
-		clr = "warning"
+		clr = "warning" // yellow
 	}
 
 	logURL, err := notifiers.AddUTMParams(build.LogUrl, notifiers.ChatMedium)
@@ -101,14 +103,34 @@ func (s *slackNotifier) writeMessage(build *cbpb.Build) (*slack.WebhookMessage, 
 		return nil, fmt.Errorf("failed to add UTM params: %w", err)
 	}
 
+	actions := []slack.AttachmentAction{{
+		Text: "View Logs",
+		Type: "button",
+		URL:  logURL,
+	}}
+
+	if tagName, ok := build.Substitutions["TAG_NAME"]; ok {
+		txt = fmt.Sprintf(
+			"Cloud Build (%s): %s",
+			tagName,
+			build.Status,
+		)
+	}
+
+	if commitSha, ok := build.Substitutions["COMMIT_SHA"]; ok {
+		if repoName, ok := build.Substitutions["REPO_NAME"]; ok {
+			actions = append(actions, slack.AttachmentAction{
+				Text: "View Commit",
+				Type: "button",
+				URL:  fmt.Sprintf("https://github.com/Grensesnitt/%s/commit/%s", repoName, commitSha),
+			})
+		}
+	}
+
 	atch := slack.Attachment{
-		Text:  txt,
-		Color: clr,
-		Actions: []slack.AttachmentAction{{
-			Text: "View Logs",
-			Type: "button",
-			URL:  logURL,
-		}},
+		Text:    txt,
+		Color:   clr,
+		Actions: actions,
 	}
 
 	return &slack.WebhookMessage{Attachments: []slack.Attachment{atch}}, nil

@@ -1,0 +1,3 @@
+[submodule "cloud-build-notifiers-submodule"]
+	path = cloud-build-notifiers-submodule
+	url = https://github.com/Grensesnitt/cloud-build-notifiers-submodule
