@@ -61,8 +61,7 @@ func TestWriteMessage(t *testing.T) {
 	}
 
 	want := &slack.WebhookMessage{
-		Attachments: []slack.Attachment{{Color: "good"}},
-		Blocks: &slack.Blocks{
+		Attachments: []slack.Attachment{{Color: "#2eb886", Blocks: slack.Blocks{
 			BlockSet: []slack.Block{
 				&slack.SectionBlock{
 					Type: "section",
@@ -89,7 +88,7 @@ func TestWriteMessage(t *testing.T) {
 					}},
 				},
 			},
-		},
+		}}},
 	}
 
 	if diff := cmp.Diff(got, want); diff != "" {
