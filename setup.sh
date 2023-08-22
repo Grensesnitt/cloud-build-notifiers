@@ -123,7 +123,7 @@ main() {
   DESTINATION_CONFIG_PATH="${DESTINATION_BUCKET_URI}/${SOURCE_CONFIG_BASENAME}"
   SOURCE_TEMPLATE_BASENAME=$(basename "${SOURCE_TEMPLATE_PATH}")
   DESTINATION_TEMPLATE_PATH="${DESTINATION_BUCKET_URI}/${SOURCE_TEMPLATE_BASENAME}"
-  IMAGE_PATH="${NOTIFIER_IMAGE_PATH:-"us-east1-docker.pkg.dev/gcb-release/cloud-build-notifiers"}/${NOTIFIER_TYPE}:latest"
+  IMAGE_PATH="us-east1-docker.pkg.dev/gcb-release/cloud-build-notifiers/${NOTIFIER_TYPE}:latest"
   SERVICE_NAME="${NOTIFIER_TYPE}-notifier"
   SUBSCRIPTION_NAME="${NOTIFIER_TYPE}-subscription"
   INVOKER_SA="cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com"
